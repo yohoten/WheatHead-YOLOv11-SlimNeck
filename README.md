@@ -1,11 +1,8 @@
 # WheatHead-YOLOv11-SlimNeck
 
-基于 **Slim-Neck + ECA 注意力**改进的 YOLO11 麦穗检测工程，是毕业设计论文
-《基于 Slim-Neck 的 YOLOv11 轻量化小麦穗检测》（杨佳敏）的配套代码与文档仓库。
+基于 **Slim-Neck + ECA 注意力**改进的 YOLO11 麦穗检测工程，是毕业设计论文《基于 Slim-Neck 的 YOLOv11 轻量化小麦穗检测》的配套代码与文档仓库。
 
-数据集为 **Global Wheat Head Detection 2020（GWHD）**，单类目标 `wheat`。
-在 YOLO11n 基线上引入 Slim-Neck 后，参数量 **2.62M → 2.34M（-10.7%）**、计算量
-**6.6 → 6.2 GFLOPs（-6.1%）**，mAP@0.5 由 0.892 降至 0.870。
+数据集为 **Global Wheat Head Detection 2020（GWHD）**，单类目标 `wheat`。在 YOLO11n 基线上引入 Slim-Neck 后，参数量 **2.62M → 2.34M（-10.7%）**、计算量**6.6 → 6.2 GFLOPs（-6.1%）**，mAP@0.5 由 0.892 降至 0.870。
 
 | 项目 | 数值 |
 |---|---|
