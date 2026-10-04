@@ -1,0 +1,130 @@
+# 优云智算平台 - 训练任务配置示例
+# ============================================
+# 根据优云智算平台的实际 API 调整此配置
+
+# 任务基本信息
+task:
+  name: "wheat-detection-yolo11"
+  description: "麦穗检测 YOLO11 模型训练"
+  type: "training"
+  
+# 容器配置
+container:
+  image: "wheat-detection:uyun"
+  # 或者使用远程镜像
+  # image: "uyun-registry/wheat-detection:latest"
+  
+# 资源配置
+resources:
+  gpu:
+    count: 1                    # GPU 数量
+    type: "NVIDIA RTX 4060"     # GPU 类型（根据实际可用调整）
+    memory: "8Gi"               # 显存要求
+  cpu:
+    count: 8                    # CPU 核心数
+  memory: "32Gi"                # 系统内存
+  storage:
+    - name: "data-volume"
+      size: "100Gi"
+      mountPath: "/app/data"
+    - name: "output-volume"
+      size: "50Gi"
+      mountPath: "/app/runs"
+
+# 环境变量
+environment:
+  - name: "PYTHONUNBUFFERED"
+    value: "1"
+  - name: "CUDA_VISIBLE_DEVICES"
+    value: "0"
+  - name: "WORK_DIR"
+    value: "/app"
+
+# 启动命令
+command:
+  - "python3"
+  - "scripts/train_uyun.py"
+  - "--model"
+  - "yolo11m.pt"
+  - "--epochs"
+  - "100"
+  - "--batch"
+  - "32"
+  - "--imgsz"
+  - "1024"
+  - "--device"
+  - "0"
+  - "--cache"
+  - "ram"
+
+# 数据卷挂载
+volumes:
+  - name: "wheat-dataset"
+    type: "persistent"
+    source: "wheat-detection-data"
+    target: "/app/data/GlobalWheat2020"
+    readOnly: false
+    
+  - name: "training-output"
+    type: "persistent"
+    source: "wheat-training-results"
+    target: "/app/runs"
+    readOnly: false
+
+# 网络配置
+network:
+  ports:
+    - containerPort: 6006       # TensorBoard
+      hostPort: 6006
+      protocol: "TCP"
+
+# 日志配置
+logging:
+  level: "INFO"
+  outputs:
+    - type: "stdout"
+    - type: "file"
+      path: "/app/runs/training.log"
+
+# 监控和告警
+monitoring:
+  enabled: true
+  metrics:
+    - "gpu_utilization"
+    - "gpu_memory"
+    - "cpu_usage"
+    - "memory_usage"
+  alerts:
+    - metric: "gpu_memory"
+      threshold: 90
+      action: "notify"
+
+# 调度策略
+scheduling:
+  priority: "high"
+  preemptible: false            # 是否可被抢占
+  maxRuntime: "72h"             # 最大运行时间
+
+# 断点续训配置
+checkpoint:
+  enabled: true
+  interval: 10                  # 每 10 个 epoch 保存一次
+  maxKeep: 5                    # 最多保留 5 个检查点
+  path: "/app/runs/train/wheat_yolo11/weights"
+
+# 完成后操作
+onComplete:
+  notifications:
+    - type: "email"
+      recipients: ["your-email@example.com"]
+    - type: "webhook"
+      url: "https://your-webhook-url/notify"
+  
+  # 自动上传结果
+  upload:
+    enabled: true
+    destination: "s3://your-bucket/results/"
+    include:
+      - "/app/runs/train/wheat_yolo11/weights/best.pt"
+      - "/app/runs/train/wheat_yolo11/results.csv"
+      - "/app/runs/train/wheat_yolo11/*.png"
