@@ -24,17 +24,19 @@ ENV/
 
 # 训练输出（避免打包大文件）
 runs/
-model/
+
+# 预训练权重（容器内由 Ultralytics 按需下载）
+weights/
 *.pt
 
 # 数据集（单独上传到平台存储）
 data/GlobalWheat2020/images/
 data/GlobalWheat2020/labels/
 
-# 文档
+# 文档（模型结构定义 model/ 必须保留，训练 slimneck 依赖它）
 *.md
 docs/
-dosc/
+reference/
 
 # 其他
 .DS_Store

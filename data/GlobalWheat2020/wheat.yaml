@@ -1,0 +1,21 @@
+# YOLOv5 🚀 by Ultralytics, AGPL-3.0 license
+# Global Wheat Head Detection 2020 Dataset
+# Example usage: python train.py --data wheat.yaml
+
+# 数据集根目录 (相对于项目根目录)
+path: ./data/GlobalWheat2020
+
+# 训练/验证/测试集路径
+train: images/train      # 3655 张训练图像
+val: images/validation   # 1476 张验证图像
+test: images/test        # 1381 张测试图像
+
+# 类别数量
+nc: 1
+
+# 类别名称
+names:
+  0: wheat
+
+# 下载脚本/URL (可选)
+# download: https://ultralytics.com/assets/coco128.zip
